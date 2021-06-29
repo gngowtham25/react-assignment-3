@@ -1,25 +1,38 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+const axios = require('axios').default;
 
-function App() {
+const App = () => {
+
+  const url = "https://www.omdbapi.com/?apikey=45f0782a&s=war"
+  const [movies, updateMovies] = useState([])
+  const [selectedMovie, updateSelectedMovie] = useState({})
+
+  useEffect(() => {
+    axios.get(url)
+      .then((response) => {
+        console.log(response.data["Search"])
+        updateMovies(response.data["Search"])
+      })
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div className="row p-4 align-items-start">
+        {
+          movies && movies.length > 0 && movies.map((eachMovie) => {
+            return (
+              <div className="col movie-list" onMouseOver={() => {updateSelectedMovie(eachMovie)}}>
+                <img className={selectedMovie && selectedMovie.imdbID === eachMovie.imdbID ? "movie-hovered" : "" } src={eachMovie.Poster} />
+                {selectedMovie && selectedMovie.imdbID === eachMovie.imdbID ? <div className="movie-title"> {eachMovie.Title} </div> : null }
+              </div>
+              
+            )
+          })
+        }
+      </div>
     </div>
-  );
+  )
 }
 
 export default App;
